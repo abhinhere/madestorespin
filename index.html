@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Made Store Spin Wheel | College Expo Stall</title>
+  <meta name="description" content="Made Store Spin & Win Challenge for College Expo. Try your luck to win exclusive prizes and discounts!">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Confetti Layer -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <div class="app-layout">
+    <!-- Top Header Bar -->
+    <header class="app-header">
+      <div class="brand-container">
+        <img src="./logo.png" alt="MADE STORE" class="brand-logo-img">
+        <div class="brand-tag-wrap">
+          <span class="brand-tag">Accessories • Watches • Sunglasses</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-sound-toggle" class="header-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-open-admin" class="header-btn admin-badge-btn" title="Staff Admin Dashboard" aria-label="Admin Dashboard">
+          <span class="admin-icon">⚙️</span>
+          <span class="admin-text">Staff Admin</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Exhibition View -->
+    <main class="main-content">
+      <div class="hero-section">
+        <div class="expo-pill-badge">
+          <span class="pill-dot"></span>
+          <span>COLLEGE EXPO 2026</span>
+          <span class="pill-divider">•</span>
+          <span>EXCLUSIVE REVEAL</span>
+        </div>
+        <h1 class="brand-headline">SPIN &amp; WIN</h1>
+        <p class="hero-invitation">Spin the timepiece to unlock handcrafted accessories &amp; boutique privileges</p>
+      </div>
+
+      <!-- Center Wheel Stage -->
+      <div class="wheel-stage">
+        <div class="wheel-halo"></div>
+        <div class="wheel-wrapper">
+          <canvas id="wheel-canvas" width="520" height="520"></canvas>
+        </div>
+      </div>
+
+      <!-- Interactive Controls -->
+      <div class="controls-section">
+        <!-- Main Spin Action Button -->
+        <button id="btn-spin" class="btn-spin" type="button" aria-label="Spin the wheel">
+          <span class="btn-spin-border"></span>
+          <span class="btn-spin-glow"></span>
+          <span class="btn-spin-text">S P I N</span>
+        </button>
+
+        <!-- Staff Reset Bar (Appears after each spin) -->
+        <div id="staff-control-bar" class="staff-control-bar" style="display: none;">
+          <div class="staff-notice">
+            <span class="status-dot"></span>
+            <span>Spin completed &amp; recorded</span>
+          </div>
+          <button id="btn-new-participant" class="btn-new-participant" type="button">
+            <span>✦</span>
+            <span>NEXT PARTICIPANT</span>
+          </button>
+        </div>
+
+        <p id="status-subtext" class="status-subtext">Step right up and test your luck today!</p>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>Official Made Store College Expo Giveaway • Visit our stall for handcrafted lifestyle goods</span>
+    </footer>
+  </div>
+
+  <!-- RESULT POPUP MODAL -->
+  <div id="result-modal" class="modal-overlay">
+    <div class="modal-card result-card">
+      <div class="result-badge-wrap">
+        <span id="result-badge" class="result-badge">✦</span>
+      </div>
+      <h2 id="result-title" class="result-title">CONGRATULATIONS</h2>
+      
+      <div class="result-prize-box">
+        <span id="result-prize-icon" class="result-prize-icon">🎁</span>
+        <div id="result-prize-name" class="result-prize-name">FREE ACCESSORY</div>
+        <div class="voucher-stamp">OFFICIAL EXPO PRIVILEGE</div>
+      </div>
+
+      <p id="result-message" class="result-message">Please collect your prize from the Made Store stall.</p>
+      
+      <div id="result-instruction" class="result-instruction">
+        Present this screen to the Made Store team at the stall to claim
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-result-done" class="btn-modal-primary" type="button">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN MODAL -->
+  <div id="admin-login-modal" class="modal-overlay">
+    <div class="modal-card login-card">
+      <div class="modal-header">
+        <h3>Staff Admin Access</h3>
+        <button id="admin-login-cancel" class="btn-close-modal">✕</button>
+      </div>
+      <p class="login-subtext">Enter stall master PIN to manage prizes and view statistics.</p>
+      
+      <div class="form-group">
+        <label for="admin-pin-input">Admin PIN</label>
+        <input type="password" id="admin-pin-input" class="form-input" placeholder="••••" maxlength="12" autocomplete="off">
+        <div id="admin-pin-error" class="form-error" style="display: none;">Incorrect PIN</div>
+        <small class="text-muted">Default expo PIN: <strong>1234</strong></small>
+      </div>
+
+      <div class="modal-actions">
+        <button id="admin-login-submit" class="btn-modal-primary" type="button">Unlock Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN MANAGEMENT PANEL MODAL -->
+  <div id="admin-panel-modal" class="modal-overlay modal-panel-overlay">
+    <div class="admin-panel-window">
+      <!-- Admin Sidebar / Header -->
+      <div class="admin-panel-header">
+        <div class="admin-brand">
+          <span class="admin-logo-mark">MADE</span>
+          <div>
+            <h2>Admin Control Center</h2>
+            <p>Expo Stall Prize &amp; Spin Management</p>
+          </div>
+        </div>
+
+        <nav class="admin-nav">
+          <button class="admin-nav-item active" data-tab="dashboard">
+            <span>📊</span> Dashboard
+          </button>
+          <button class="admin-nav-item" data-tab="prizes">
+            <span>🎁</span> Prize Setup
+          </button>
+          <button class="admin-nav-item" data-tab="history">
+            <span>📜</span> Spin History
+          </button>
+          <button class="admin-nav-item" data-tab="settings">
+            <span>⚙️</span> Settings &amp; Backup
+          </button>
+        </nav>
+
+        <button id="btn-close-admin" class="btn-close-panel">Close Panel ✕</button>
+      </div>
+
+      <!-- Panel Body -->
+      <div class="admin-panel-body">
+
+        <!-- TAB 1: DASHBOARD -->
+        <div id="tab-dashboard" class="admin-tab-content active">
+          <div class="stats-overview-grid">
+            <div class="stat-card">
+              <span class="stat-icon">🎯</span>
+              <div class="stat-info">
+                <span class="stat-label">TOTAL SPINS</span>
+                <span id="stat-total-spins" class="stat-value">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">📅</span>
+              <div class="stat-info">
+                <span class="stat-label">TODAY'S SPINS</span>
+                <span id="stat-today-spins" class="stat-value">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">🎡</span>
+              <div class="stat-info">
+                <span class="stat-label">ACTIVE WHEEL PRIZES</span>
+                <span id="stat-active-prizes" class="stat-value">5 Active</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">🏆</span>
+              <div class="stat-info">
+                <span class="stat-label">MOST AWARDED</span>
+                <span id="stat-most-awarded" class="stat-value">None yet</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-split-layout">
+            <!-- Distribution Card -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Prize Distribution &amp; Inventory</h3>
+                <small class="text-muted">Real-time won statistics</small>
+              </div>
+              <div id="prize-distribution-list" class="distribution-list">
+                <!-- Dynamically injected distribution bars -->
+              </div>
+            </div>
+
+            <!-- Recent Spins Card -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Recent Expo Spins</h3>
+                <small class="text-muted">Latest 5 winners</small>
+              </div>
+              <div id="recent-spins-list" class="recent-spins-list">
+                <!-- Dynamically injected -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PRIZES MANAGEMENT -->
+        <div id="tab-prizes" class="admin-tab-content">
+          <div class="section-toolbar">
+            <div>
+              <h3>Wheel Prize Inventory</h3>
+              <p class="text-muted">Configure prizes, weights, stock limits, and segment colors.</p>
+            </div>
+            <button id="btn-add-prize" class="btn-primary-action">
+              <span>+</span> Add New Prize
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Prize Name &amp; Icon</th>
+                  <th>Stock Quantity</th>
+                  <th>Probability Weight</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="prize-table-body">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="info-alert">
+            💡 <strong>Smart Stock Depletion:</strong> When a prize with limited quantity hits 0 remaining, it is automatically removed from the wheel so it cannot be selected again. Unlimited prizes never deplete.
+          </div>
+        </div>
+
+        <!-- TAB 3: SPIN HISTORY -->
+        <div id="tab-history" class="admin-tab-content">
+          <div class="section-toolbar">
+            <div class="search-wrap">
+              <input type="text" id="history-search" class="search-input" placeholder="Search by spin ID or prize name...">
+            </div>
+            <div class="toolbar-button-group">
+              <button id="btn-export-csv" class="btn-secondary-action">
+                <span>📥</span> Export CSV
+              </button>
+              <button id="btn-reset-today" class="btn-secondary-action">
+                <span>🔄</span> Reset Today's Stats
+              </button>
+              <button id="btn-clear-history" class="btn-danger-action">
+                <span>🗑️</span> Clear All History
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Spin ID</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Prize Awarded</th>
+                  <th>Result</th>
+                  <th>Stock Snapshot</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: SETTINGS & BACKUP -->
+        <div id="tab-settings" class="admin-tab-content">
+          <div class="settings-grid">
+            <!-- Backup & Restore -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Offline Backup &amp; Restore</h3>
+                <small class="text-muted">Save prize configuration before the expo</small>
+              </div>
+              <p class="settings-desc">
+                Export all prize settings, probabilities, and custom messages to a local JSON file. You can import this anytime on any device running offline.
+              </p>
+              <div class="settings-actions">
+                <button id="btn-export-config" class="btn-secondary-action">
+                  <span>💾</span> Export Configuration File
+                </button>
+                <label class="btn-secondary-action file-upload-label">
+                  <span>📂</span> Import Configuration File
+                  <input type="file" id="file-import-config" accept=".json" style="display: none;">
+                </label>
+              </div>
+            </div>
+
+            <!-- Spin Physics Settings -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Wheel Animation Timing</h3>
+                <small class="text-muted">Adjust spin duration</small>
+              </div>
+              <div class="form-group">
+                <div class="range-header">
+                  <label for="settings-spin-duration">Spin Duration</label>
+                  <span id="settings-spin-duration-val" class="range-val">4.8s</span>
+                </div>
+                <input type="range" id="settings-spin-duration" min="3.0" max="8.0" step="0.2" value="4.8" class="range-input">
+                <small class="text-muted">Recommended: 4.5s - 5.5s for ideal expo excitement.</small>
+              </div>
+            </div>
+
+            <!-- Security PIN -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Admin Security PIN</h3>
+                <small class="text-muted">Change access passcode</small>
+              </div>
+              <div class="form-group">
+                <label for="settings-new-pin">New Admin PIN</label>
+                <div class="input-with-button">
+                  <input type="text" id="settings-new-pin" class="form-input" placeholder="Enter min 4 digits/characters">
+                  <button id="btn-save-pin" class="btn-primary-action">Save PIN</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Factory Reset -->
+            <div class="content-box">
+              <div class="box-header">
+                <h3>Reset Default Prizes</h3>
+                <small class="text-muted">Restore default Made Store prize lineup</small>
+              </div>
+              <p class="settings-desc">
+                Reverts prizes back to Free Chocolate, 5% Off, Free Accessory, 10% Off, and Better Luck Next Time.
+              </p>
+              <button id="btn-reset-defaults" class="btn-danger-action">
+                Restore Factory Defaults
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIZE ADD / EDIT MODAL -->
+  <div id="prize-form-modal" class="modal-overlay">
+    <div class="modal-card prize-modal-card">
+      <div class="modal-header">
+        <h3 id="prize-form-title">Add New Prize</h3>
+        <button id="btn-close-prize-form" class="btn-close-modal">✕</button>
+      </div>
+
+      <form id="prize-form" class="prize-modal-form">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="prize-name">Prize Name *</label>
+            <input type="text" id="prize-name" class="form-input" placeholder="e.g. FREE TOTE BAG" required>
+          </div>
+          <div class="form-group">
+            <label for="prize-icon">Icon / Emoji</label>
+            <input type="text" id="prize-icon" class="form-input" placeholder="🎁" maxlength="4">
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="prize-quantity">Quantity Available</label>
+            <input type="number" id="prize-quantity" class="form-input" min="0" value="10">
+          </div>
+          <div class="form-group checkbox-align">
+            <label class="checkbox-label">
+              <input type="checkbox" id="prize-unlimited">
+              <span>Unlimited Quantity (Never runs out)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <div class="label-with-preview">
+              <label for="prize-weight">Probability Weight *</label>
+              <span id="prize-weight-percent" class="preview-badge">~20% chance</span>
+            </div>
+            <input type="number" id="prize-weight" class="form-input" min="1" max="1000" value="25" required>
+            <small class="text-muted">Higher weight relative to other prizes = higher chance of winning.</small>
+          </div>
+          <div class="form-group checkbox-align">
+            <label class="checkbox-label">
+              <input type="checkbox" id="prize-nowin">
+              <span>Is "No-Win" Segment (e.g. Try Again)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Segment Color & Swatches -->
+        <div class="form-group">
+          <label>Segment Brand Colors</label>
+          <div class="color-picker-row">
+            <div class="color-input-wrap">
+              <label class="sub-label">Segment Color</label>
+              <input type="color" id="prize-color" value="#C5B880">
+            </div>
+            <div class="color-input-wrap">
+              <label class="sub-label">Text Color</label>
+              <input type="color" id="prize-text-color" value="#FFFFFF">
+            </div>
+            <div class="palette-swatches">
+              <span class="sub-label">Brand Presets:</span>
+              <div class="preset-buttons">
+                <button type="button" class="color-preset-btn" data-color="#15161A" data-text-color="#FAF7EE" style="background:#15161A;" title="Deep Obsidian"></button>
+                <button type="button" class="color-preset-btn" data-color="#1E2026" data-text-color="#C5B880" style="background:#1E2026;" title="Titanium Slate"></button>
+                <button type="button" class="color-preset-btn" data-color="#28231B" data-text-color="#FAF7EE" style="background:#28231B;" title="Brushed Bronze"></button>
+                <button type="button" class="color-preset-btn" data-color="#C5B880" data-text-color="#121316" style="background:#C5B880;" title="Made Gold Khaki"></button>
+                <button type="button" class="color-preset-btn" data-color="#121316" data-text-color="#8E8B82" style="background:#121316;" title="Midnight Charcoal"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prize-message">Win Screen Message</label>
+          <input type="text" id="prize-message" class="form-input" placeholder="Please collect your prize from the Made Store stall.">
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="prize-enabled" checked>
+            <span>Active on Wheel</span>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="btn-cancel-prize-form" class="btn-modal-secondary">Cancel</button>
+          <button type="submit" class="btn-modal-primary">Save Prize</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
