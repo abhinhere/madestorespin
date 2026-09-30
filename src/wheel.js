@@ -196,21 +196,21 @@ export class SpinWheel {
     // Bezel base ring
     ctx.beginPath();
     ctx.arc(0, 0, radius + 8, 0, 2 * Math.PI);
-    ctx.fillStyle = '#16171B';
+    ctx.fillStyle = '#22231A';
     ctx.fill();
 
     // Precision outer hairline ring
     ctx.beginPath();
     ctx.arc(0, 0, radius + 8, 0, 2 * Math.PI);
     ctx.lineWidth = 1;
-    ctx.strokeStyle = 'rgba(197, 184, 128, 0.4)';
+    ctx.strokeStyle = 'rgba(229, 217, 180, 0.6)';
     ctx.stroke();
 
     // Precision inner champagne hairline ring
     ctx.beginPath();
     ctx.arc(0, 0, radius + 1, 0, 2 * Math.PI);
     ctx.lineWidth = 1.2;
-    ctx.strokeStyle = '#C5B880';
+    ctx.strokeStyle = '#D4C49A';
     ctx.stroke();
 
     // Minimal watch bezel indices / tick marks around perimeter
@@ -228,7 +228,7 @@ export class SpinWheel {
       ctx.moveTo(cos * innerR, sin * innerR);
       ctx.lineTo(cos * outerR, sin * outerR);
       ctx.lineWidth = isMajor ? 1.2 : 0.6;
-      ctx.strokeStyle = isMajor ? '#C5B880' : 'rgba(197, 184, 128, 0.25)';
+      ctx.strokeStyle = isMajor ? '#D4C49A' : 'rgba(229, 217, 180, 0.4)';
       ctx.stroke();
     }
     ctx.restore();
@@ -237,8 +237,8 @@ export class SpinWheel {
     ctx.save();
     ctx.rotate(currentAngle);
 
-    // Default luxury palette fallback if colors match old legacy tones
-    const defaultLuxuryColors = ['#15161A', '#1E2026', '#28231B', '#1E2026', '#121316'];
+    // Default luxury light palette fallback
+    const defaultLightColors = ['#FBF8F0', '#EADDBE', '#F2ECE0', '#E5D6AE', '#E8E1CE'];
 
     for (let i = 0; i < count; i++) {
       const prize = prizes[i];
@@ -251,22 +251,22 @@ export class SpinWheel {
       ctx.arc(0, 0, radius, startAngle, endAngle);
       ctx.closePath();
 
-      // Ensure segment uses minimal luxury tone
+      // Ensure segment uses light luxury tone
       let segColor = prize.color;
-      if (!segColor || segColor === '#F4EFE6' || segColor === '#5C5D30') {
-        segColor = defaultLuxuryColors[i % defaultLuxuryColors.length];
+      if (!segColor || segColor.startsWith('#1') || segColor.startsWith('#2') || segColor.startsWith('#0') || segColor === '#5C5D30') {
+        segColor = defaultLightColors[i % defaultLightColors.length];
       }
 
       ctx.fillStyle = segColor;
       ctx.fill();
 
       // Fine champagne hairline divider
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(197, 184, 128, 0.22)';
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = 'rgba(140, 120, 65, 0.35)';
       ctx.stroke();
 
       // Render prize content
-      this.drawSegmentContent(prize, startAngle, endAngle, radius);
+      this.drawSegmentContent(prize, startAngle, endAngle, radius, segColor);
     }
 
     ctx.restore(); // end rotated wheel disc
@@ -283,7 +283,7 @@ export class SpinWheel {
   /**
    * Render prize text and icon cleanly without overlap
    */
-  drawSegmentContent(prize, startAngle, endAngle, radius) {
+  drawSegmentContent(prize, startAngle, endAngle, radius, segColor = '#FBF8F0') {
     const { ctx } = this;
     const midAngle = startAngle + (endAngle - startAngle) / 2;
 
@@ -303,8 +303,16 @@ export class SpinWheel {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Color contrast
-    const textColor = prize.textColor || '#FAF7EE';
+    // Perceived luminance calculation helper
+    const isLightBg = this.checkIsLightColor(segColor);
+
+    // Color contrast enforcement: ensure text is dark on light slices
+    let textColor = prize.textColor || '#1A1B14';
+    if (isLightBg && this.checkIsLightColor(textColor)) {
+      textColor = '#1A1B14';
+    } else if (!isLightBg && !this.checkIsLightColor(textColor)) {
+      textColor = '#FAF7EE';
+    }
 
     // Scale typography cleanly relative to wheel size
     const scaleFactor = Math.min(1.15, Math.max(0.75, radius / 180));
@@ -317,27 +325,47 @@ export class SpinWheel {
 
     // Minimalist luxury accent mark (subtle brand gold diamond)
     const symbolSize = Math.max(7.5, Math.round(9.5 * scaleFactor));
-    ctx.fillStyle = '#C5B880';
+    ctx.fillStyle = isLightBg ? '#8C7736' : '#C5B880';
     ctx.font = `600 ${symbolSize}px "Outfit", sans-serif`;
     ctx.fillText('✦', 0, -(lines.length * lineHeight * 0.5) - (7 * scaleFactor));
 
-    // Draw typography with clean contrast shadow along spoke
+    // Draw typography with clean contrast
     ctx.font = `600 ${fontSize}px "Outfit", "Plus Jakarta Sans", sans-serif`;
     ctx.letterSpacing = '1.2px';
 
     lines.forEach((line, idx) => {
       const yOffset = (idx - (lines.length - 1) / 2) * lineHeight;
 
-      // Dark shadow for razor-sharp readability
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-      ctx.fillText(line, 0, yOffset + 1);
+      if (isLightBg) {
+        // Subtle letterpress relief highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillText(line, 0, yOffset + 0.6);
 
-      // Main text in champagne or crisp ivory
-      ctx.fillStyle = textColor;
-      ctx.fillText(line, 0, yOffset);
+        // Deep charcoal typography
+        ctx.fillStyle = textColor;
+        ctx.fillText(line, 0, yOffset);
+      } else {
+        // Dark drop shadow for light text
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+        ctx.fillText(line, 0, yOffset + 1);
+
+        ctx.fillStyle = textColor;
+        ctx.fillText(line, 0, yOffset);
+      }
     });
 
     ctx.restore();
+  }
+
+  checkIsLightColor(hex) {
+    if (!hex || typeof hex !== 'string') return true;
+    let c = hex.replace('#', '');
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    if (c.length !== 6) return true;
+    const r = parseInt(c.substring(0, 2), 16) || 0;
+    const g = parseInt(c.substring(2, 4), 16) || 0;
+    const b = parseInt(c.substring(4, 6), 16) || 0;
+    return (r * 299 + g * 587 + b * 114) / 1000 > 130;
   }
 
   formatPrizeLines(name) {
@@ -385,21 +413,21 @@ export class SpinWheel {
     // Outer champagne gold rim
     ctx.beginPath();
     ctx.arc(0, 0, hubRadius, 0, 2 * Math.PI);
-    ctx.fillStyle = '#101114';
+    ctx.fillStyle = '#181914';
     ctx.fill();
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = '#C5B880';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#D4C49A';
     ctx.stroke();
 
     // Inner concentric luxury ring
     ctx.beginPath();
     ctx.arc(0, 0, hubRadius - 4.5, 0, 2 * Math.PI);
-    ctx.lineWidth = 0.75;
-    ctx.strokeStyle = 'rgba(197, 184, 128, 0.4)';
+    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = 'rgba(229, 217, 180, 0.5)';
     ctx.stroke();
 
     // "MADE" luxury typography
-    ctx.fillStyle = '#C5B880';
+    ctx.fillStyle = '#FAF0D2';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = `800 ${Math.max(10, hubRadius * 0.42)}px "Outfit", sans-serif`;
@@ -409,7 +437,7 @@ export class SpinWheel {
     // Center pivot point
     ctx.beginPath();
     ctx.arc(0, hubRadius * 0.42, 1.8, 0, 2 * Math.PI);
-    ctx.fillStyle = '#C5B880';
+    ctx.fillStyle = '#D4C49A';
     ctx.fill();
   }
 

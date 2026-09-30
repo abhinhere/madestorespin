@@ -475,8 +475,8 @@ export class AdminController {
       this.prizeFormTitle.textContent = 'Edit Wheel Prize';
       this.inputPrizeName.value = prize.name;
       this.inputPrizeIcon.value = prize.icon || '🎁';
-      this.inputPrizeColor.value = prize.color || '#C5B880';
-      this.inputPrizeTextColor.value = prize.textColor || '#FFFFFF';
+      this.inputPrizeColor.value = prize.color || '#FBF8F0';
+      this.inputPrizeTextColor.value = prize.textColor || '#1A1B14';
       this.inputPrizeUnlimited.checked = Boolean(prize.isUnlimited);
       this.inputPrizeQty.disabled = Boolean(prize.isUnlimited);
       this.inputPrizeQty.value = prize.isUnlimited ? 0 : prize.quantity;
@@ -487,8 +487,8 @@ export class AdminController {
     } else {
       this.prizeFormTitle.textContent = 'Add New Wheel Prize';
       this.prizeForm.reset();
-      this.inputPrizeColor.value = '#C5B880';
-      this.inputPrizeTextColor.value = '#FFFFFF';
+      this.inputPrizeColor.value = '#FBF8F0';
+      this.inputPrizeTextColor.value = '#1A1B14';
       this.inputPrizeIcon.value = '🎁';
       this.inputPrizeWeight.value = 20;
       this.inputPrizeQty.value = 10;

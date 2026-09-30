@@ -1344,3 +1344,113 @@ body::before {
     padding-top: 0;
   }
 }
+
+/* ===================================================================
+   PROGRESSIVE WEB APP (PWA) STYLES & NOTIFICATIONS
+   =================================================================== */
+
+.pwa-install-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(229, 217, 180, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  font-weight: 700;
+  gap: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  animation: pwaGlowPulse 2.8s infinite ease-in-out;
+}
+
+.pwa-install-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(229, 217, 180, 0.3) 100%);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  transform: translateY(-1.5px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(229, 217, 180, 0.35);
+}
+
+.pwa-install-btn .install-icon {
+  font-size: 13px;
+}
+
+@keyframes pwaGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(229, 217, 180, 0.4), 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(229, 217, 180, 0), 0 3px 12px rgba(229, 217, 180, 0.3);
+  }
+}
+
+/* PWA Toast Notifications */
+.pwa-toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+  width: calc(100% - 32px);
+  max-width: 440px;
+}
+
+.pwa-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(24, 26, 32, 0.94);
+  border: 1px solid rgba(229, 217, 180, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-full);
+  color: #FAF7EE;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 16px rgba(229, 217, 180, 0.15);
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwa-toast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.pwa-toast-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.pwa-toast-msg {
+  letter-spacing: 0.2px;
+}
+
+/* Standalone & Notched Device Enhancements */
+body.pwa-standalone .app-header {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
+body.pwa-standalone .app-footer {
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+
+body.is-offline .hero-section::after {
+  content: "⚡ Offline Mode";
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #FFF2D1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+}

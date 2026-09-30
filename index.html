@@ -6,6 +6,17 @@
   <title>Made Store Spin Wheel | College Expo Stall</title>
   <meta name="description" content="Made Store Spin & Win Challenge for College Expo. Try your luck to win exclusive prizes and discounts!">
   
+  <!-- Progressive Web App (PWA) Meta & Icons -->
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#686835">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Made Spin">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+
   <!-- Modern Typography from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,6 +39,10 @@
       </div>
 
       <div class="header-actions">
+        <button id="btn-install-app" class="header-btn pwa-install-btn" title="Install App to Device" aria-label="Install Made Store App" style="display: none;">
+          <span class="install-icon">📲</span>
+          <span class="install-text">Install App</span>
+        </button>
         <button id="btn-sound-toggle" class="header-btn" title="Toggle Sound" aria-label="Toggle Sound">
           <span id="sound-icon">🔊</span>
         </button>
@@ -435,20 +450,20 @@
           <div class="color-picker-row">
             <div class="color-input-wrap">
               <label class="sub-label">Segment Color</label>
-              <input type="color" id="prize-color" value="#C5B880">
+              <input type="color" id="prize-color" value="#FBF8F0">
             </div>
             <div class="color-input-wrap">
               <label class="sub-label">Text Color</label>
-              <input type="color" id="prize-text-color" value="#FFFFFF">
+              <input type="color" id="prize-text-color" value="#1A1B14">
             </div>
             <div class="palette-swatches">
               <span class="sub-label">Brand Presets:</span>
               <div class="preset-buttons">
-                <button type="button" class="color-preset-btn" data-color="#15161A" data-text-color="#FAF7EE" style="background:#15161A;" title="Deep Obsidian"></button>
-                <button type="button" class="color-preset-btn" data-color="#1E2026" data-text-color="#C5B880" style="background:#1E2026;" title="Titanium Slate"></button>
-                <button type="button" class="color-preset-btn" data-color="#28231B" data-text-color="#FAF7EE" style="background:#28231B;" title="Brushed Bronze"></button>
-                <button type="button" class="color-preset-btn" data-color="#C5B880" data-text-color="#121316" style="background:#C5B880;" title="Made Gold Khaki"></button>
-                <button type="button" class="color-preset-btn" data-color="#121316" data-text-color="#8E8B82" style="background:#121316;" title="Midnight Charcoal"></button>
+                <button type="button" class="color-preset-btn" data-color="#FBF8F0" data-text-color="#1A1B14" style="background:#FBF8F0; border: 1px solid #D4C49A;" title="Soft Linen Cream"></button>
+                <button type="button" class="color-preset-btn" data-color="#EADDBE" data-text-color="#1A1B14" style="background:#EADDBE; border: 1px solid #C5B880;" title="Champagne Gold"></button>
+                <button type="button" class="color-preset-btn" data-color="#F2ECE0" data-text-color="#1A1B14" style="background:#F2ECE0; border: 1px solid #D4C49A;" title="Sandstone Alabaster"></button>
+                <button type="button" class="color-preset-btn" data-color="#E5D6AE" data-text-color="#1A1B14" style="background:#E5D6AE; border: 1px solid #C5B880;" title="Pale Khaki Gold"></button>
+                <button type="button" class="color-preset-btn" data-color="#E8E1CE" data-text-color="#545142" style="background:#E8E1CE; border: 1px solid #C5B880;" title="Warm Cashmere"></button>
               </div>
             </div>
           </div>

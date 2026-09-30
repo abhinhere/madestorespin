@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradients -->
+    <radialGradient id="bgGlow" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#808044"/>
+      <stop offset="60%" stop-color="#646434"/>
+      <stop offset="100%" stop-color="#3D3E20"/>
+    </radialGradient>
+
+    <radialGradient id="hubGradient" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#262820"/>
+      <stop offset="100%" stop-color="#12130E"/>
+    </radialGradient>
+
+    <!-- Metallic Gold Gradients -->
+    <linearGradient id="goldMetallic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF5D6"/>
+      <stop offset="25%" stop-color="#E5D9B4"/>
+      <stop offset="50%" stop-color="#C5B880"/>
+      <stop offset="75%" stop-color="#9C8D55"/>
+      <stop offset="100%" stop-color="#D8CA9B"/>
+    </linearGradient>
+
+    <filter id="shadowFilter" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+
+    <filter id="pointerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#FFEDB3" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Full Edge-to-Edge Maskable Background -->
+  <rect width="512" height="512" fill="url(#bgGlow)"/>
+
+  <!-- Scaled Group within 80% Safe Zone (Center: 256, 256) -->
+  <g transform="translate(51.2, 51.2) scale(0.8)">
+    <!-- Outer Bezel Ring with Shadow -->
+    <g filter="url(#shadowFilter)">
+      <circle cx="256" cy="256" r="204" fill="#4B4B26" stroke="url(#goldMetallic)" stroke-width="7"/>
+      <circle cx="256" cy="256" r="197" fill="none" stroke="#252617" stroke-width="3"/>
+    </g>
+
+    <!-- Wheel Segments (8 slices) -->
+    <g>
+      <path d="M 256 256 L 256 62 A 194 194 0 0 1 393 119 Z" fill="#6B6C38"/>
+      <path d="M 256 256 L 393 119 A 194 194 0 0 1 450 256 Z" fill="#25271F"/>
+      <path d="M 256 256 L 450 256 A 194 194 0 0 1 393 393 Z" fill="#6B6C38"/>
+      <path d="M 256 256 L 393 393 A 194 194 0 0 1 256 450 Z" fill="#25271F"/>
+      <path d="M 256 256 L 256 450 A 194 194 0 0 1 119 393 Z" fill="#6B6C38"/>
+      <path d="M 256 256 L 119 393 A 194 194 0 0 1 62 256 Z" fill="#25271F"/>
+      <path d="M 256 256 L 62 256 A 194 194 0 0 1 119 119 Z" fill="#6B6C38"/>
+      <path d="M 256 256 L 119 119 A 194 194 0 0 1 256 62 Z" fill="#25271F"/>
+    </g>
+
+    <!-- Segment Dividers -->
+    <g stroke="url(#goldMetallic)" stroke-width="2.5" stroke-opacity="0.85">
+      <line x1="256" y1="62" x2="256" y2="450"/>
+      <line x1="62" y1="256" x2="450" y2="256"/>
+      <line x1="119" y1="119" x2="393" y2="393"/>
+      <line x1="119" y1="393" x2="393" y2="119"/>
+    </g>
+
+    <!-- Center Hub / Timepiece Core -->
+    <g filter="url(#shadowFilter)">
+      <circle cx="256" cy="256" r="112" fill="url(#hubGradient)" stroke="url(#goldMetallic)" stroke-width="6"/>
+      <circle cx="256" cy="256" r="103" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1.5"/>
+    </g>
+
+    <!-- Center Typography & Brand Styling -->
+    <g text-anchor="middle" font-family="'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif">
+      <text x="256" y="200" font-size="16" fill="#F8EBC3" font-weight="700">✦</text>
+      <text x="256" y="246" font-size="44" font-weight="900" fill="#FFFFFF" letter-spacing="4.5">MADE</text>
+      <text x="256" y="278" font-size="15" font-weight="700" fill="#E5D9B4" letter-spacing="3.5">SPIN &amp; WIN</text>
+      <text x="256" y="302" font-size="10.5" font-weight="600" fill="#A89F7D" letter-spacing="2">EXPO 2026</text>
+    </g>
+
+    <!-- Top Dial Pointer -->
+    <g filter="url(#pointerGlow)">
+      <polygon points="256,76 242,38 270,38" fill="url(#goldMetallic)" stroke="#222416" stroke-width="2"/>
+      <circle cx="256" cy="48" r="3.5" fill="#FFFFFF"/>
+    </g>
+  </g>
+</svg>

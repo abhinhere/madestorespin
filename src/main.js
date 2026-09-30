@@ -7,6 +7,7 @@ import { sounds } from './audio.js';
 import { SpinWheel } from './wheel.js';
 import { ConfettiCannon } from './confetti.js';
 import { AdminController } from './admin.js';
+import './pwa.js';
 
 class App {
   constructor() {

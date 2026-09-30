@@ -10,14 +10,14 @@ const STORAGE_KEYS = {
 };
 
 // Initial default prizes matching the expo brief
-// Initial default prizes matching the luxury Made Store aesthetic
+// Initial default prizes matching the luxury Made Store aesthetic in light colors
 export const DEFAULT_PRIZES = [
   {
     id: 'prize_1',
     name: 'FREE CHOCOLATE',
     icon: '🍫',
-    color: '#15161A',
-    textColor: '#FAF7EE',
+    color: '#FBF8F0',
+    textColor: '#1A1B14',
     quantity: 50,
     isUnlimited: false,
     probability: 50,
@@ -31,8 +31,8 @@ export const DEFAULT_PRIZES = [
     id: 'prize_2',
     name: '5% OFF',
     icon: '🏷️',
-    color: '#1E2026',
-    textColor: '#C5B880',
+    color: '#EADDBE',
+    textColor: '#1A1B14',
     quantity: 60,
     isUnlimited: false,
     probability: 25,
@@ -46,8 +46,8 @@ export const DEFAULT_PRIZES = [
     id: 'prize_3',
     name: 'FREE ACCESSORY',
     icon: '🎁',
-    color: '#28231B',
-    textColor: '#FAF7EE',
+    color: '#F2ECE0',
+    textColor: '#1A1B14',
     quantity: 3,
     isUnlimited: false,
     probability: 5,
@@ -61,8 +61,8 @@ export const DEFAULT_PRIZES = [
     id: 'prize_4',
     name: '10% OFF',
     icon: '✨',
-    color: '#1E2026',
-    textColor: '#C5B880',
+    color: '#E5D6AE',
+    textColor: '#1A1B14',
     quantity: 25,
     isUnlimited: false,
     probability: 15,
@@ -76,8 +76,8 @@ export const DEFAULT_PRIZES = [
     id: 'prize_5',
     name: 'BETTER LUCK NEXT TIME',
     icon: '☘️',
-    color: '#121316',
-    textColor: '#8E8B82',
+    color: '#E8E1CE',
+    textColor: '#545142',
     quantity: 0,
     isUnlimited: true,
     probability: 45,
@@ -129,23 +129,39 @@ class Store {
       if (data) {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Auto-migrate legacy muddy colors to refined luxury palette
-          const legacyColorMap = {
-            '#808044': { color: '#C5B880', textColor: '#121316' },
-            '#F4EFE6': { color: '#1E2026', textColor: '#C5B880' },
-            '#5C5D30': { color: '#28231B', textColor: '#FAF7EE' },
-            '#DDD5C1': { color: '#1E2026', textColor: '#C5B880' },
-            '#282B28': { color: '#121316', textColor: '#8E8B82' },
+          // Auto-migrate legacy dark tones to refined light luxury palette
+          const darkToLightMap = {
+            '#15161A': { color: '#FBF8F0', textColor: '#1A1B14' },
+            '#1E2026': { color: '#EADDBE', textColor: '#1A1B14' },
+            '#28231B': { color: '#F2ECE0', textColor: '#1A1B14' },
+            '#121316': { color: '#E8E1CE', textColor: '#545142' },
+            '#808044': { color: '#FBF8F0', textColor: '#1A1B14' },
+            '#5C5D30': { color: '#E5D6AE', textColor: '#1A1B14' },
+            '#282B28': { color: '#E8E1CE', textColor: '#545142' },
+            '#C5B880': { color: '#EADDBE', textColor: '#1A1B14' },
           };
+          const lightPalette = ['#FBF8F0', '#EADDBE', '#F2ECE0', '#E5D6AE', '#E8E1CE'];
           let modified = false;
-          parsed.forEach(p => {
-            const mapped = legacyColorMap[p.color?.toUpperCase()] || legacyColorMap[p.color];
+
+          parsed.forEach((p, idx) => {
+            const hex = p.color?.toUpperCase();
+            const mapped = darkToLightMap[hex] || darkToLightMap[p.color];
             if (mapped) {
               p.color = mapped.color;
               p.textColor = mapped.textColor;
               modified = true;
+            } else if (p.color && (p.color.startsWith('#1') || p.color.startsWith('#2') || p.color.startsWith('#0') || p.color.startsWith('#3'))) {
+              // Any dark tones converted to corresponding light tones
+              p.color = lightPalette[idx % lightPalette.length];
+              p.textColor = idx === 4 ? '#545142' : '#1A1B14';
+              modified = true;
+            } else if (!p.textColor || p.textColor === '#FFFFFF' || p.textColor === '#FAF7EE') {
+              // Prevent white-on-light invisible text
+              p.textColor = '#1A1B14';
+              modified = true;
             }
           });
+
           if (modified) {
             localStorage.setItem(STORAGE_KEYS.PRIZES, JSON.stringify(parsed));
           }
@@ -192,8 +208,8 @@ class Store {
       id,
       name: newPrize.name.trim(),
       icon: newPrize.icon || '🎁',
-      color: newPrize.color || '#C5B880',
-      textColor: newPrize.textColor || '#FFFFFF',
+      color: newPrize.color || '#FBF8F0',
+      textColor: newPrize.textColor || '#1A1B14',
       quantity: newPrize.isUnlimited ? 0 : Number(newPrize.quantity) || 0,
       isUnlimited: Boolean(newPrize.isUnlimited),
       probability: Math.max(1, Number(newPrize.probability) || 10),
